@@ -5,11 +5,18 @@ require("dotenv").config();
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 
+import supabase from "../supabaseInstance";
+
 // Import CORS
 const cors = require("cors");
 
 // Import Axios
 const axios = require("axios");
+
+// Import our routes
+import { getAllMovies, addMovie } from "./routes/movies";
+import { getReviewsByID } from "./routes/reviews";
+import { getRatingsByID } from "./routes/reviewRatings";
 
 // create an express application
 const app = express();
@@ -35,17 +42,30 @@ app.get("/", (request: Request, response: Response, next: NextFunction) => {
   response.json({ message: "welcome to our server" });
 });
 
+// POST a movie
+app.post("/movies", addMovie);
+
+// GET ALL Movies
+app.get("/movies", getAllMovies);
+
+// GET al reviews for Movie
+app.get("/movies/:id/reviews", getReviewsByID);
+
+// GET al ratings for Review
+app.get("/reviews/:id/ratings", getRatingsByID);
 
 // Error Handling
 // Generic Error Handling
-app.use((error: Error, request: Request, response: Response, next: NextFunction) => {
-  console.error(error.stack);
-  response.status(500).json({
-    error: "Something broke!",
-    errorStack: error.stack,
-    errorMessage: error.message,
-  });
-});
+app.use(
+  (error: Error, request: Request, response: Response, next: NextFunction) => {
+    console.error(error.stack);
+    response.status(500).json({
+      error: "Something broke!",
+      errorStack: error.stack,
+      errorMessage: error.message,
+    });
+  }
+);
 
 // 404 Resource not found Error Handling
 app.use((request: Request, response: Response, next: NextFunction) => {
@@ -62,4 +82,3 @@ const server = app.listen(PORT, () => {
 
 // export our app for testing
 module.exports = app;
-
