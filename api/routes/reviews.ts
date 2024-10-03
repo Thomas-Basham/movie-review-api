@@ -19,4 +19,27 @@ const getReviewsByID = async (
   }
 };
 
-export { getReviewsByID };
+const postReview = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { content } = request.body;
+    const movieID = request.params.id;
+    const { data, error } = await supabase.post("review", {
+      movieid: movieID,
+      content,
+      // timestamp: new Date().toISOString(),
+    });
+
+    if (error) {
+      response.status(500).json({ error: error, message: error.message });
+    }
+
+    response.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+export { getReviewsByID, postReview };

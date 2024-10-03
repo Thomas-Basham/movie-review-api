@@ -15,8 +15,12 @@ const axios = require("axios");
 
 // Import our routes
 import { getAllMovies, addMovie } from "./routes/movies";
-import { getReviewsByID } from "./routes/reviews";
-import { getRatingsByID } from "./routes/reviewRatings";
+import { getReviewsByID, postReview } from "./routes/reviews";
+import {
+  getRatingsByID,
+  postRating,
+  getAverageRatingByMovieID,
+} from "./routes/reviewRatings";
 
 // create an express application
 const app = express();
@@ -45,14 +49,23 @@ app.get("/", (request: Request, response: Response, next: NextFunction) => {
 // POST a movie
 app.post("/movies", addMovie);
 
-// GET ALL Movies
+// GET all Movies
 app.get("/movies", getAllMovies);
 
-// GET al reviews for Movie
+// GET all reviews for movie
 app.get("/movies/:id/reviews", getReviewsByID);
 
-// GET al ratings for Review
+// GET all ratings for review
 app.get("/reviews/:id/ratings", getRatingsByID);
+
+// GET average ratings for movie
+app.get("/movies/:id/average-rating", getAverageRatingByMovieID);
+
+// POST a review for movie
+app.post("/movies/:id/reviews", postReview);
+
+// POST a rating for a review
+app.post("/reviews/:id/rate", postRating);
 
 // Error Handling
 // Generic Error Handling
