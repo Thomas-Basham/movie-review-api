@@ -27,7 +27,7 @@ const PORT = process.env.PORT;
 // Define our Middleware
 // Use CORS Middleware
 const corsOptions = {
-  origin: process.env.BEVERAGE_CLIENT,
+  origin: process.env.CLIENT_URL,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
