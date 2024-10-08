@@ -36,7 +36,7 @@ const postRating = async (
     });
 
     if (error) {
-      response.status(500).json({ error });
+      response.status(500).json({ error, message: error.message });
     }
 
     response.status(201).json(data);
@@ -89,7 +89,9 @@ const getAverageRatingByMovieID = async (
     );
     const averageRating = totalRating / ratings.length;
 
-    response.status(200).json({ averageRating });
+    const amountOfRatings = ratings.length
+
+    response.status(200).json({ averageRating, amountOfRatings });
   } catch (error) {
     next(error);
   }
