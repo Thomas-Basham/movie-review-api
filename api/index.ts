@@ -3,15 +3,9 @@ require("dotenv").config();
 
 // Import Express
 import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-
-import supabase from "../supabaseInstance";
 
 // Import CORS
 const cors = require("cors");
-
-// Import Axios
-const axios = require("axios");
 
 // Import our routes
 import { getAllMovies, addMovie } from "./routes/movies";
@@ -56,7 +50,7 @@ app.get("/movies", getAllMovies);
 app.get("/movies/:id/reviews", getReviewsByID);
 
 // GET all ratings for review
-app.get("/reviews/:id/ratings", getRatingsByID);
+app.get("/reviews/:id/rating", getRatingsByID);
 
 // GET average ratings for movie
 app.get("/movies/:id/average-rating", getAverageRatingByMovieID);
