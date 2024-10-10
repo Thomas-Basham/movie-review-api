@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Application } from "express";
 import supabase from "../../supabaseInstance";
 
 const getRatingsByID = async (
   request: Request,
   response: Response,
   next: NextFunction
-) => {
+): Promise<any | Response<any>> => {
   try {
     const reviewID = request.params.id;
     const { data, error } = await supabase.get(
@@ -13,7 +13,7 @@ const getRatingsByID = async (
     );
     if (error) {
       console.log(error.message);
-      response.status(500).json({ error });
+      return response.status(500).json({ error });
     }
 
     response.json(data);
@@ -26,7 +26,7 @@ const postRating = async (
   request: Request,
   response: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<any | Response<any>> => {
   try {
     const { rating } = request.body;
     const reviewID = request.params.id;
@@ -36,7 +36,7 @@ const postRating = async (
     });
 
     if (error) {
-      response.status(500).json({ error, message: error.message });
+      return response.status(500).json({ error, message: error.message });
     }
 
     response.status(201).json(data);
@@ -49,7 +49,7 @@ const getAverageRatingByMovieID = async (
   request: Request,
   response: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<any | Response<any>> => {
   try {
     const movieID = request.params.id;
 
@@ -60,14 +60,14 @@ const getAverageRatingByMovieID = async (
 
     if (reviewsError) {
       console.log(reviewsError.message);
-      response.status(500).json({ error: reviewsError });
+      return response.status(500).json({ error: reviewsError });
     }
 
     // Extract review IDs from the movie's reviews
     const reviewIDs = reviews.map((review: { id: number }) => review.id);
 
     if (reviewIDs.length === 0) {
-      response
+    return  response
         .status(200)
         .json({ message: "No reviews found for this movie." });
     }
@@ -89,7 +89,7 @@ const getAverageRatingByMovieID = async (
     );
     const averageRating = totalRating / ratings.length;
 
-    const amountOfRatings = ratings.length
+    const amountOfRatings = ratings.length;
 
     response.status(200).json({ averageRating, amountOfRatings });
   } catch (error) {
