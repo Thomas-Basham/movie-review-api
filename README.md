@@ -1,4 +1,3 @@
-
 # Movie Review App
 
 This is a **Movie Review API** built using **Express**, **TypeScript**, and the **Supabase REST API**. The API allows users to manage movies, add reviews for movies, and rate the reviews. It demonstrates full CRUD operations and uses Supabase for database storage and relationship management between movies, reviews, and ratings.
@@ -27,26 +26,42 @@ This is a **Movie Review API** built using **Express**, **TypeScript**, and the 
 ### SQL Schema
 
 ```sql
-create table Movie (
-  id bigint primary key generated always as identity,
-  title text not null,
-  release_year int not null
-);
+CREATE TABLE
+  public.movie (
+    id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    title TEXT NOT NULL,
+    release_year INTEGER NOT NULL,
+    poster_path TEXT NULL DEFAULT ''::TEXT,
+    overview TEXT NULL DEFAULT ''::TEXT,
+    backdrop_path TEXT NULL DEFAULT ''::TEXT,
+    "TMDBid" BIGINT NULL,
+    CONSTRAINT movie_pkey PRIMARY KEY (id)
+  ) TABLESPACE pg_default;
 
-create table Review (
-  id bigint primary key generated always as identity,
-  MovieID bigint,
-  content text not null,
-  timestamp timestamp with time zone,
-  foreign key (MovieID) references Movie (id) on delete cascade
-);
+CREATE TABLE
+  public.review (
+    id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    movieid BIGINT NULL,
+    CONTENT TEXT NOT NULL,
+    TIMESTAMP TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    CONSTRAINT review_pkey PRIMARY KEY (id),
+    CONSTRAINT review_movieid_fkey FOREIGN KEY (movieid) REFERENCES movie (id) ON DELETE CASCADE
+  ) TABLESPACE pg_default;
 
-create table ReviewRating (
-  id bigint primary key generated always as identity,
-  ReviewID bigint,
-  rating int check (rating >= 1 and rating <= 5),
-  foreign key (ReviewID) references Review (id) on delete cascade
-);
+CREATE TABLE
+  public.reviewrating (
+    id BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
+    reviewid BIGINT NULL,
+    rating REAL NULL,
+    CONSTRAINT reviewrating_pkey PRIMARY KEY (id),
+    CONSTRAINT reviewrating_reviewid_fkey FOREIGN KEY (reviewid) REFERENCES review (id) ON DELETE CASCADE,
+    CONSTRAINT reviewrating_rating_check CHECK (
+      (
+        (rating >= (1)::DOUBLE PRECISION)
+        AND (rating <= (5)::DOUBLE PRECISION)
+      )
+    )
+  ) TABLESPACE pg_default;
 ```
 
 ## API Endpoints
